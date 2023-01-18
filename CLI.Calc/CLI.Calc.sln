@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLI.Calc.Console", "CLI.Cal
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLI.Calc.Domain", "CLI.Calc.Domain\CLI.Calc.Domain.csproj", "{42ADE652-961F-405E-B0C5-6FCC6D68359D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLI.Calc.Application", "CLI.Calc.Application\CLI.Calc.Application.csproj", "{0E5DD7E3-078D-4CFF-991C-01497B67C044}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{42ADE652-961F-405E-B0C5-6FCC6D68359D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{42ADE652-961F-405E-B0C5-6FCC6D68359D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{42ADE652-961F-405E-B0C5-6FCC6D68359D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E5DD7E3-078D-4CFF-991C-01497B67C044}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E5DD7E3-078D-4CFF-991C-01497B67C044}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E5DD7E3-078D-4CFF-991C-01497B67C044}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E5DD7E3-078D-4CFF-991C-01497B67C044}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
