@@ -44,5 +44,30 @@ namespace CLI.Calc.Application.Services
         /// <returns>Multiplication as decimal</returns>
         public static decimal Multiply(int n1, int n2) => (decimal)n1 * (decimal)n2;
 
+        /// <summary>
+        /// Add new operator and it's behavious to the calculator
+        /// </summary>
+        /// <param name="key">Operator key to be added exemple "/"</param>
+        /// <param name="operation">The operation to be performed</param>
+        /// <returns>The number of current operators</returns>
+        public int AddOperator(string key, Func<int, int, decimal> operation)
+        {
+            if (!IsValidKey(key))
+            {
+                _operators.Add(key, operation);
+            }
+
+            return _operators.Count;
+        }
+
+        /// <summary>
+        /// Checks if the given key already exist in the list of operators
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public bool IsValidKey(string key)
+        {
+            return _operators.ContainsKey(key);
+        }
     }
 }
