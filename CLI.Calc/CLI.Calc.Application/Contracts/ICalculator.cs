@@ -9,5 +9,7 @@
         decimal Multiply(int n1, int n2);
 
         bool IsValidKey(string key);
+
+        decimal ApplyOperator(ref LinkedList<string> operators, ref LinkedList<decimal> numbers, bool firstInLastOut);
     }
 }

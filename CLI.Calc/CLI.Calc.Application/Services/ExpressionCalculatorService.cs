@@ -1,13 +1,8 @@
 ﻿using CLI.Calc.Application.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CLI.Calc.Application.Services
 {
-    public class ExpressionCalculatorService
+    public class ExpressionCalculatorService : IExpressionCalculatorService
     {
         readonly ICalculator _calculator;
         readonly CalculatorExtender _calculatorExtender;
@@ -32,8 +27,8 @@ namespace CLI.Calc.Application.Services
         /// Remove an operator by it's key
         /// </summary>
         /// <param name="key">Operator key to be added exemple "/"</param>
-        public void RemoveOperator(string key) 
-        { 
+        public void RemoveOperator(string key)
+        {
             _calculatorExtender.RemoveOperator(key);
         }
 
@@ -43,13 +38,36 @@ namespace CLI.Calc.Application.Services
         /// <param name="expression">The expresion to parse and calculate</param>
         /// <returns>The result of the expression</returns>
         /// <exception cref="Exception"></exception>
-        public static decimal CalculateExpression(string expression)
+        public decimal CalculateExpression(string expression)
         {
             var tokens = expression.Split(" ");
             var numbers = new LinkedList<decimal>();
             var operators = new LinkedList<string>();
 
-            //ToDo: Calculation Logic
+            for (int i = 0; i < tokens.Length; i++)
+            {
+                var token = tokens[i];
+                if (!token.All(char.IsDigit) && _calculator.IsValidKey(token))
+                {
+                    if (operators.Count > 0 && _calculator.IsValidKey(operators.Last()) &&
+                           ShouldCalculateCurrent(token, operators.Last()))
+                    {
+                        var result = _calculator.ApplyOperator(ref operators, ref numbers, true);
+                        numbers.AddLast(result);
+                    }
+                    operators.AddLast(token);
+                }
+                else
+                {
+                    numbers.AddLast(decimal.Parse(token));
+                }
+            }
+
+            while (operators.Count > 0)
+            {
+                var result = _calculator.ApplyOperator(ref operators, ref numbers, false);
+                numbers.AddFirst(result);
+            }
 
             if (numbers.Count != 1)
             {
@@ -59,5 +77,11 @@ namespace CLI.Calc.Application.Services
             return numbers.Last();
         }
 
+        private static bool ShouldCalculateCurrent(string currentOperator, string lastOperator)
+        {
+            int currentPrecedence = currentOperator == "*" || currentOperator == "/" ? 2 : 1;
+            int stackPrecedence = lastOperator == "*" || lastOperator == "/" ? 2 : 1;
+            return currentPrecedence <= stackPrecedence;
+        }
     }
 }

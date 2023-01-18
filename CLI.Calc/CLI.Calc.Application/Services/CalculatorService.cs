@@ -81,5 +81,36 @@ namespace CLI.Calc.Application.Services
         {
             return _operators.ContainsKey(key);
         }
+
+        /// <summary>
+        /// Calculate the given numbers by applying the opperator
+        /// </summary>
+        /// <param name="operators">List of operators</param>
+        /// <param name="numbers">List of numbers</param>
+        /// <param name="firstInLastOut">true to start from the end of the list, otherwise false</param>
+        /// <returns>the calculated reslut by operator</returns>
+        public decimal ApplyOperator(ref LinkedList<string> operators, ref LinkedList<decimal> numbers, bool firstInLastOut)
+        {
+            decimal result = 0;
+            string key;
+            decimal firstNumber;
+            decimal secondNumber;
+
+            if (firstInLastOut)
+            {
+                key = operators.Last(); operators.RemoveLast();
+                firstNumber = numbers.Last(); numbers.RemoveLast();
+                secondNumber = numbers.Last(); numbers.RemoveLast();
+            }
+            else
+            {
+                key = operators.First(); operators.RemoveFirst();
+                firstNumber = numbers.First(); numbers.RemoveFirst();
+                secondNumber = numbers.First(); numbers.RemoveFirst();
+            }
+
+            result = _operators[key]((int)firstNumber, (int)secondNumber);
+            return result;
+        }
     }
 }
