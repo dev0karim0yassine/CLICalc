@@ -69,11 +69,6 @@ namespace CLI.Calc.Application.Services
                 numbers.AddFirst(result);
             }
 
-            if (numbers.Count != 1)
-            {
-                throw new Exception("Invalid expression");
-            }
-
             return numbers.Last();
         }
 

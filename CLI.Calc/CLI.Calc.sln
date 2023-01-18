@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLI.Calc.Domain", "CLI.Calc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLI.Calc.Application", "CLI.Calc.Application\CLI.Calc.Application.csproj", "{0E5DD7E3-078D-4CFF-991C-01497B67C044}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{2E823C09-85FB-4C76-9928-370741BDE103}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLI.Calc.Application.Test", "CLI.Calc.Application.Test\CLI.Calc.Application.Test.csproj", "{5492F19B-9F9F-45B7-8505-FE10E176CA57}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,9 +31,16 @@ Global
 		{0E5DD7E3-078D-4CFF-991C-01497B67C044}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E5DD7E3-078D-4CFF-991C-01497B67C044}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E5DD7E3-078D-4CFF-991C-01497B67C044}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5492F19B-9F9F-45B7-8505-FE10E176CA57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5492F19B-9F9F-45B7-8505-FE10E176CA57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5492F19B-9F9F-45B7-8505-FE10E176CA57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5492F19B-9F9F-45B7-8505-FE10E176CA57}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5492F19B-9F9F-45B7-8505-FE10E176CA57} = {2E823C09-85FB-4C76-9928-370741BDE103}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6E6756E7-DF98-47E2-8EED-157743DCDA6C}
