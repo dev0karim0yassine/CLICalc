@@ -56,6 +56,22 @@ namespace CLI.Calc.Application.Services
             return _operators.Count;
         }
 
+
+        /// <summary>
+        /// Remove an operator by it's key
+        /// </summary>
+        /// <param name="key">Operator key to be added exemple "/"</param>
+        /// <returns>The number of current operators</returns>
+        public override int RemoveOperator(string key)
+        {
+            if (IsValidKey(key))
+            {
+                _operators.Remove(key);
+            }
+
+            return _operators.Count;
+        }
+
         /// <summary>
         /// Checks if the given key already exist in the list of operators
         /// </summary>

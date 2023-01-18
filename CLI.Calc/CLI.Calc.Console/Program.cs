@@ -1,1 +1,2 @@
-﻿Console.WriteLine("Hello, World!");
+﻿
+Console.WriteLine("5656".All(char.IsDigit));

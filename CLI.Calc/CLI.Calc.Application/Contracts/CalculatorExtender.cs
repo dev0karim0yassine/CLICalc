@@ -6,5 +6,10 @@
         {
             throw new NotImplementedException();
         }
+
+        public virtual int RemoveOperator(string key)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
