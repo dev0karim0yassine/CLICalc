@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CLI.Calc.Application.Contracts;
 
 namespace CLI.Calc.Application.Services
 {
-    public class CalculatorService
+    public class CalculatorService : ICalculator
     {
-        private Dictionary<string, Func<int, int, decimal>> _operators;
+        private readonly Dictionary<string, Func<int, int, decimal>> _operators;
 
         public CalculatorService()
         {
@@ -26,7 +22,7 @@ namespace CLI.Calc.Application.Services
         /// <param name="n1">First Number</param>
         /// <param name="n2">Second Number</param>
         /// <returns>Sum as decimal</returns>
-        public static decimal Plus(int n1, int n2) => (decimal)n1 + (decimal)n2;
+        public decimal Plus(int n1, int n2) => (decimal)n1 + (decimal)n2;
 
         /// <summary>
         /// Subtract two numbers
@@ -34,7 +30,7 @@ namespace CLI.Calc.Application.Services
         /// <param name="n1">First Number</param>
         /// <param name="n2">Second Number</param>
         /// <returns>Subtraction as decimal</returns>
-        public static decimal Minus(int n1, int n2) => (decimal)n1 - (decimal)n2;
+        public decimal Minus(int n1, int n2) => (decimal)n1 - (decimal)n2;
 
         /// <summary>
         /// Multiply two numbers
@@ -42,7 +38,7 @@ namespace CLI.Calc.Application.Services
         /// <param name="n1">First Number</param>
         /// <param name="n2">Second Number</param>
         /// <returns>Multiplication as decimal</returns>
-        public static decimal Multiply(int n1, int n2) => (decimal)n1 * (decimal)n2;
+        public decimal Multiply(int n1, int n2) => (decimal)n1 * (decimal)n2;
 
         /// <summary>
         /// Add new operator and it's behavious to the calculator
@@ -63,8 +59,8 @@ namespace CLI.Calc.Application.Services
         /// <summary>
         /// Checks if the given key already exist in the list of operators
         /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
+        /// <param name="key">Operator key to check</param>
+        /// <returns>true if the key exist in the list of operators, otherwise false</returns>
         public bool IsValidKey(string key)
         {
             return _operators.ContainsKey(key);
