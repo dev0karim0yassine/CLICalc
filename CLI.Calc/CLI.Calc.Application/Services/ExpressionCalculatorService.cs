@@ -5,12 +5,10 @@ namespace CLI.Calc.Application.Services
     public class ExpressionCalculatorService : IExpressionCalculatorService
     {
         readonly ICalculator _calculator;
-        readonly CalculatorExtender _calculatorExtender;
 
-        public ExpressionCalculatorService(ICalculator calculator, CalculatorExtender calculatorExtender)
+        public ExpressionCalculatorService(ICalculator calculator)
         {
             _calculator = calculator;
-            _calculatorExtender = calculatorExtender;
         }
 
         /// <summary>
@@ -20,7 +18,7 @@ namespace CLI.Calc.Application.Services
         /// <param name="operation">The operation to be performed</param>
         public void AddOperator(string key, Func<int, int, decimal> operation)
         {
-            _calculatorExtender.AddOperator(key, operation);
+            _calculator.AddCustomOperator(key, operation);
         }
 
         /// <summary>
@@ -29,7 +27,7 @@ namespace CLI.Calc.Application.Services
         /// <param name="key">Operator key to be added exemple "/"</param>
         public void RemoveOperator(string key)
         {
-            _calculatorExtender.RemoveOperator(key);
+            _calculator.RemoveCustomOperator(key);
         }
 
         /// <summary>
@@ -47,36 +45,38 @@ namespace CLI.Calc.Application.Services
             for (int i = 0; i < tokens.Length; i++)
             {
                 var token = tokens[i];
-                if (!token.All(char.IsDigit) && _calculator.IsValidKey(token))
+                if (token.All(char.IsDigit))
                 {
-                    if (operators.Count > 0 && _calculator.IsValidKey(operators.Last()) &&
-                           ShouldCalculateCurrent(token, operators.Last()))
+                    numbers.AddLast(decimal.Parse(token));
+                }
+                else if (_calculator.IsKeyFound(token))
+                {
+                    var previousOperator = operators.Count > 0 ? operators.Last() : default;
+                    var currentOperator = token;
+                    if (previousOperator != default && CanApplyCurrent(currentOperator, previousOperator))
                     {
-                        var result = _calculator.ApplyOperator(ref operators, ref numbers, true);
+                        var result = _calculator.ApplyOperator(ref operators, ref numbers, calculateAll: false);
                         numbers.AddLast(result);
                     }
                     operators.AddLast(token);
                 }
-                else
-                {
-                    numbers.AddLast(decimal.Parse(token));
-                }
             }
 
-            while (operators.Count > 0)
-            {
-                var result = _calculator.ApplyOperator(ref operators, ref numbers, false);
-                numbers.AddFirst(result);
-            }
+            return _calculator.ApplyOperator(ref operators, ref numbers, calculateAll: true);
 
-            return numbers.Last();
         }
 
-        private static bool ShouldCalculateCurrent(string currentOperator, string lastOperator)
+        private static bool CanApplyCurrent(string currentOperator, string lastOperator)
         {
-            int currentPrecedence = currentOperator == "*" || currentOperator == "/" ? 2 : 1;
-            int stackPrecedence = lastOperator == "*" || lastOperator == "/" ? 2 : 1;
-            return currentPrecedence <= stackPrecedence;
+
+            int currentOperatorPriotory = GetOperatorPriorioty(currentOperator);
+            int lastOperatorPriotory = GetOperatorPriorioty(lastOperator);
+            return currentOperatorPriotory <= lastOperatorPriotory;
+        }
+        
+        private static int GetOperatorPriorioty(string _operator)
+        {
+            return _operator == "*" || _operator == "/" ? 2 : 1;
         }
     }
 }

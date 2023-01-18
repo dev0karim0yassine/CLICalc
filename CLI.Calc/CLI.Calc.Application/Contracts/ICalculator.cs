@@ -8,8 +8,12 @@
         
         decimal Multiply(int n1, int n2);
 
-        bool IsValidKey(string key);
+        bool IsKeyFound(string key);
 
-        decimal ApplyOperator(ref LinkedList<string> operators, ref LinkedList<decimal> numbers, bool firstInLastOut);
+        int AddCustomOperator(string key, Func<int, int, decimal> operation);
+
+        int RemoveCustomOperator(string key);
+
+        decimal ApplyOperator(ref LinkedList<string> operators, ref LinkedList<decimal> numbers, bool calculateAll);
     }
 }

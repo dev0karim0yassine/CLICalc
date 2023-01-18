@@ -8,9 +8,11 @@ using Microsoft.Extensions.DependencyInjection;
 var services = new ServiceCollection();
 
 // Add your services
-services.AddSingleton<CalculatorService>();
-services.AddSingleton<ICalculator>(x => x.GetService<CalculatorService>());
-services.AddSingleton<CalculatorExtender>(x => x.GetService<CalculatorService>());
+//services.AddSingleton<CalculatorService>();
+
+//services.AddSingleton<ICalculator>(x => x.GetService<CalculatorService>());
+//services.AddSingleton<CalculatorExtender>(x => x.GetService<CalculatorService>());
+services.AddSingleton<ICalculator, CalculatorService>();
 services.AddSingleton<IExpressionCalculatorService, ExpressionCalculatorService>();
 
 // Create the service provider

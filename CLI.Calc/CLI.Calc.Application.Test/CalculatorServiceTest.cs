@@ -1,3 +1,5 @@
+using CLI.Calc.Application.Exceptions;
+
 namespace CLI.Calc.Application.Test
 {
     public class CalculatorServiceTest
@@ -64,24 +66,45 @@ namespace CLI.Calc.Application.Test
             int expected = 4;
 
             // Act
-            int result = _calculatorSut.AddOperator(key, operation);
+            int result = _calculatorSut.AddCustomOperator(key, operation);
 
             // Assert
             Assert.Equal(expected, result);
         }
 
         [Fact]
-        public void RemoveOperator_WhenCalledWithValidOperator_ReturnsNumberOfOperators()
+        public void AddCustomOperator_WhenCalledWithValidOperator_ThrowsException()
+        {
+            // Arrange
+            string key = "+";
+            Func<int, int, decimal> operation = (first, second) => (decimal)first + (decimal)second;
+
+            // Act & Assert
+            Assert.Throws<CalculatorException>(() => _calculatorSut.AddCustomOperator(key, operation));
+        }
+
+        [Fact]
+        public void RemoveCustomOperator_WhenCalledWithValidOperator_ReturnsNumberOfOperators()
         {
             // Arrange
             string key = "+";
             int expected = 2;
 
             // Act
-            int result = _calculatorSut.RemoveOperator(key);
+            int result = _calculatorSut.RemoveCustomOperator(key);
 
             // Assert
             Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void RemoveCustomOperator_WhenCalledWithValidOperator_ThrowsException()
+        {
+            // Arrange
+            string key = "/";
+
+            // Act & Assert
+            Assert.Throws<CalculatorException>(() => _calculatorSut.RemoveCustomOperator(key));
         }
 
         [Fact]
@@ -91,7 +114,7 @@ namespace CLI.Calc.Application.Test
             string key = "*";
 
             // Act
-            bool result = _calculatorSut.IsValidKey(key);
+            bool result = _calculatorSut.IsKeyFound(key);
 
             // Assert
             Assert.True(result);

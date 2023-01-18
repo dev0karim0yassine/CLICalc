@@ -1,8 +1,9 @@
 ﻿using CLI.Calc.Application.Contracts;
+using CLI.Calc.Application.Exceptions;
 
 namespace CLI.Calc.Application.Services
 {
-    public class CalculatorService : CalculatorExtender, ICalculator
+    public class CalculatorService : ICalculator
     {
         private readonly Dictionary<string, Func<int, int, decimal>> _operators;
 
@@ -46,28 +47,31 @@ namespace CLI.Calc.Application.Services
         /// <param name="key">Operator key to be added exemple "/"</param>
         /// <param name="operation">The operation to be performed</param>
         /// <returns>The number of current operators</returns>
-        public override int AddOperator(string key, Func<int, int, decimal> operation)
+        public int AddCustomOperator(string key, Func<int, int, decimal> operation)
         {
-            if (!IsValidKey(key))
+            if (IsKeyFound(key))
             {
-                _operators.Add(key, operation);
+                throw new CalculatorException($"Key {key} already exists.");
             }
+
+            _operators.Add(key, operation);
 
             return _operators.Count;
         }
-
 
         /// <summary>
         /// Remove an operator by it's key
         /// </summary>
         /// <param name="key">Operator key to be added exemple "/"</param>
         /// <returns>The number of current operators</returns>
-        public override int RemoveOperator(string key)
+        public int RemoveCustomOperator(string key)
         {
-            if (IsValidKey(key))
+            if (!IsKeyFound(key))
             {
-                _operators.Remove(key);
+                throw new CalculatorException($"Key {key} was not found.");
             }
+
+            _operators.Remove(key);
 
             return _operators.Count;
         }
@@ -77,7 +81,7 @@ namespace CLI.Calc.Application.Services
         /// </summary>
         /// <param name="key">Operator key to check</param>
         /// <returns>true if the key exist in the list of operators, otherwise false</returns>
-        public bool IsValidKey(string key)
+        public bool IsKeyFound(string key)
         {
             return _operators.ContainsKey(key);
         }
@@ -87,29 +91,38 @@ namespace CLI.Calc.Application.Services
         /// </summary>
         /// <param name="operators">List of operators</param>
         /// <param name="numbers">List of numbers</param>
-        /// <param name="firstInLastOut">true to start from the end of the list, otherwise false</param>
+        /// <param name="calculateAll">true to start from the end of the list, otherwise false</param>
         /// <returns>the calculated reslut by operator</returns>
-        public decimal ApplyOperator(ref LinkedList<string> operators, ref LinkedList<decimal> numbers, bool firstInLastOut)
+        public decimal ApplyOperator(ref LinkedList<string> operators, ref LinkedList<decimal> numbers, bool calculateAll)
         {
             decimal result = 0;
             string key;
             decimal firstNumber;
             decimal secondNumber;
 
-            if (firstInLastOut)
+            if (!calculateAll)
             {
                 key = operators.Last(); operators.RemoveLast();
                 firstNumber = numbers.Last(); numbers.RemoveLast();
                 secondNumber = numbers.Last(); numbers.RemoveLast();
+
+                result = _operators[key]((int)firstNumber, (int)secondNumber);
             }
             else
             {
-                key = operators.First(); operators.RemoveFirst();
-                firstNumber = numbers.First(); numbers.RemoveFirst();
-                secondNumber = numbers.First(); numbers.RemoveFirst();
+                while (operators.Count > 0)
+                {
+                    key = operators.First(); operators.RemoveFirst();
+                    firstNumber = numbers.First(); numbers.RemoveFirst();
+                    secondNumber = numbers.First(); numbers.RemoveFirst();
+                    result = _operators[key]((int)firstNumber, (int)secondNumber);
+
+                    numbers.AddFirst(result);
+                }
+
+                result = numbers.Last();
             }
 
-            result = _operators[key]((int)firstNumber, (int)secondNumber);
             return result;
         }
     }
