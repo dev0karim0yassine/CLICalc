@@ -2,7 +2,7 @@
 
 namespace CLI.Calc.Application.Services
 {
-    public class CalculatorService : ICalculator
+    public class CalculatorService : CalculatorExtender, ICalculator
     {
         private readonly Dictionary<string, Func<int, int, decimal>> _operators;
 
@@ -46,7 +46,7 @@ namespace CLI.Calc.Application.Services
         /// <param name="key">Operator key to be added exemple "/"</param>
         /// <param name="operation">The operation to be performed</param>
         /// <returns>The number of current operators</returns>
-        public int AddOperator(string key, Func<int, int, decimal> operation)
+        public override int AddOperator(string key, Func<int, int, decimal> operation)
         {
             if (!IsValidKey(key))
             {
