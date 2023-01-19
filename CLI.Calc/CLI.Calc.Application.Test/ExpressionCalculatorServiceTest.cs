@@ -22,10 +22,10 @@ namespace CLI.Calc.Application.Test
             Func<int, int, decimal> operation = (first, second) => (decimal)first / (decimal)second;
 
             // Act
-            expressionCalculatorService.AddOperator(key, operation);
+            expressionCalculatorService.AddOperator(key, operation, true);
 
             // Assert
-            calculator.Verify(x => x.AddCustomOperator(key, operation), Times.Once);
+            calculator.Verify(x => x.AddCustomOperator(key, operation, true), Times.Once);
         }
 
         [Fact]
@@ -49,7 +49,7 @@ namespace CLI.Calc.Application.Test
             var expressionCalculatorService = new ExpressionCalculatorService(calculator.Object);
             string expression = "3 + 2";
 
-            calculator.Setup(c => c.ApplyOperator(ref It.Ref<LinkedList<string>>.IsAny, ref It.Ref<LinkedList<decimal>>.IsAny, true))
+            calculator.Setup(c => c.ApplyOperator("+", 3, 2))
                 .Returns(5).Verifiable();
 
             calculator.Setup(c => c.IsKeyFound(It.IsAny<string>()))
@@ -69,10 +69,10 @@ namespace CLI.Calc.Application.Test
             var expressionCalculatorService = new ExpressionCalculatorService(calculator.Object);
             string expression = "3 + 2 - 1";
 
-            calculator.Setup(c => c.ApplyOperator(ref It.Ref<LinkedList<string>>.IsAny, ref It.Ref<LinkedList<decimal>>.IsAny, false))
+            calculator.Setup(c => c.ApplyOperator("+", 3, 2))
                 .Returns(5).Verifiable();
 
-            calculator.Setup(c => c.ApplyOperator(ref It.Ref<LinkedList<string>>.IsAny, ref It.Ref<LinkedList<decimal>>.IsAny, true))
+            calculator.Setup(c => c.ApplyOperator("-", 5, 1))
                 .Returns(4).Verifiable();
 
             calculator.Setup(c => c.IsKeyFound(It.IsAny<string>()))

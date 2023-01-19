@@ -66,7 +66,7 @@ namespace CLI.Calc.Application.Test
             int expected = 4;
 
             // Act
-            int result = _calculatorSut.AddCustomOperator(key, operation);
+            int result = _calculatorSut.AddCustomOperator(key, operation, true);
 
             // Assert
             Assert.Equal(expected, result);
@@ -80,21 +80,17 @@ namespace CLI.Calc.Application.Test
             Func<int, int, decimal> operation = (first, second) => (decimal)first + (decimal)second;
 
             // Act & Assert
-            Assert.Throws<CalculatorException>(() => _calculatorSut.AddCustomOperator(key, operation));
+            Assert.Throws<CalculatorException>(() => _calculatorSut.AddCustomOperator(key, operation, true));
         }
 
         [Fact]
-        public void RemoveCustomOperator_WhenCalledWithValidOperator_ReturnsNumberOfOperators()
+        public void RemoveCustomOperator_WhenCalledWithABaseOperator_ThrowsException()
         {
             // Arrange
             string key = "+";
-            int expected = 2;
 
-            // Act
-            int result = _calculatorSut.RemoveCustomOperator(key);
-
-            // Assert
-            Assert.Equal(expected, result);
+            // Act & Assert
+            Assert.Throws<CalculatorException>(() => _calculatorSut.RemoveCustomOperator(key));
         }
 
         [Fact]
@@ -124,16 +120,26 @@ namespace CLI.Calc.Application.Test
         public void ApplyOperator_WhenCalledWithValidOperator_ReturnsCalculatedResult()
         {
             // Arrange
-            LinkedList<string> operators = new LinkedList<string>();
-            operators.AddFirst("+");
-            LinkedList<decimal> numbers = new LinkedList<decimal>();
-            numbers.AddFirst(5);
-            numbers.AddFirst(8);
-            bool firstInLastOut = true;
+            var _operator = "+";
+            var number1 = 5;
+            var number2 = 8;
             decimal expected = 13;
 
             // Act
-            decimal result = _calculatorSut.ApplyOperator(ref operators, ref numbers, firstInLastOut);
+            decimal result = _calculatorSut.ApplyOperator(_operator, number1, number2);
+
+            // Assert
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void GetOperatorPriorioty_WhenCalledWithValidOperator_ReturnsFalse()
+        {
+            // Arrange
+            var expected = false;
+
+            // Act
+            var result = _calculatorSut.GetOperatorPriorioty("+");
 
             // Assert
             Assert.Equal(expected, result);

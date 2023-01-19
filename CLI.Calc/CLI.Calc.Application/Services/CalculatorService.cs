@@ -1,19 +1,21 @@
 ﻿using CLI.Calc.Application.Contracts;
 using CLI.Calc.Application.Exceptions;
+using CLI.Calc.Domain;
+using System.Linq;
 
 namespace CLI.Calc.Application.Services
 {
     public class CalculatorService : ICalculator
     {
-        private readonly Dictionary<string, Func<int, int, decimal>> _operators;
+        private readonly List<Operator> _operators;
 
         public CalculatorService()
         {
-            _operators = new()
+            _operators = new List<Operator>
             {
-                { "+", (first, second) => Plus(first, second)  },
-                { "-", (first, second) => Minus(first, second)  },
-                { "*", (first, second) => Multiply(first, second)  }
+                new Operator("+", (first, second) => Plus(first, second), true, false),
+                new Operator("-", (first, second) => Minus(first, second), true, false),
+                new Operator("*", (first, second) => Multiply(first, second), true, true),
             };
         }
 
@@ -46,15 +48,16 @@ namespace CLI.Calc.Application.Services
         /// </summary>
         /// <param name="key">Operator key to be added exemple "/"</param>
         /// <param name="operation">The operation to be performed</param>
+        /// <param name="isPriorOperator">Is Prior Operator</param>
         /// <returns>The number of current operators</returns>
-        public int AddCustomOperator(string key, Func<int, int, decimal> operation)
+        public int AddCustomOperator(string key, Func<int, int, decimal> operation, bool isPriorOperator)
         {
             if (IsKeyFound(key))
             {
                 throw new CalculatorException($"Key {key} already exists.");
             }
 
-            _operators.Add(key, operation);
+            _operators.Add(new Operator(key, operation, false, isPriorOperator));
 
             return _operators.Count;
         }
@@ -71,7 +74,14 @@ namespace CLI.Calc.Application.Services
                 throw new CalculatorException($"Key {key} was not found.");
             }
 
-            _operators.Remove(key);
+            var opertaor = _operators.First(o => o.OperatorName.Equals(key));
+
+            if (opertaor.IsBaseOperator)
+            {
+                throw new CalculatorException($"cannot delete key {key}, (base opeartor).");
+            }
+
+            _operators.Remove(opertaor);
 
             return _operators.Count;
         }
@@ -83,47 +93,29 @@ namespace CLI.Calc.Application.Services
         /// <returns>true if the key exist in the list of operators, otherwise false</returns>
         public bool IsKeyFound(string key)
         {
-            return _operators.ContainsKey(key);
+            return _operators.Any(o => o.OperatorName.Equals(key));
         }
 
         /// <summary>
         /// Calculate the given numbers by applying the opperator
         /// </summary>
-        /// <param name="operators">List of operators</param>
-        /// <param name="numbers">List of numbers</param>
-        /// <param name="calculateAll">true to start from the end of the list, otherwise false</param>
+        /// <param name="operatorName">Operator Name</param>
+        /// <param name="firstNumber">First Number</param>
+        /// <param name="secondNumber">Second Number</param>
         /// <returns>the calculated reslut by operator</returns>
-        public decimal ApplyOperator(ref LinkedList<string> operators, ref LinkedList<decimal> numbers, bool calculateAll)
+        public int ApplyOperator(string operatorName, int firstNumber, int secondNumber)
         {
-            decimal result = 0;
-            string key;
-            decimal firstNumber;
-            decimal secondNumber;
+            return (int)_operators.First(o => o.OperatorName.Equals(operatorName)).Operation(firstNumber, secondNumber);
+        }
 
-            if (!calculateAll)
-            {
-                key = operators.Last(); operators.RemoveLast();
-                firstNumber = numbers.Last(); numbers.RemoveLast();
-                secondNumber = numbers.Last(); numbers.RemoveLast();
-
-                result = _operators[key]((int)firstNumber, (int)secondNumber);
-            }
-            else
-            {
-                while (operators.Count > 0)
-                {
-                    key = operators.First(); operators.RemoveFirst();
-                    firstNumber = numbers.First(); numbers.RemoveFirst();
-                    secondNumber = numbers.First(); numbers.RemoveFirst();
-                    result = _operators[key]((int)firstNumber, (int)secondNumber);
-
-                    numbers.AddFirst(result);
-                }
-
-                result = numbers.Last();
-            }
-
-            return result;
+        /// <summary>
+        /// Get Operator Priorioty
+        /// </summary>
+        /// <param name="operatorName"></param>
+        /// <returns></returns>
+        public bool GetOperatorPriorioty(string operatorName)
+        {
+            return _operators.First(o => o.OperatorName.Equals(operatorName)).IsPriorOperator;
         }
     }
 }

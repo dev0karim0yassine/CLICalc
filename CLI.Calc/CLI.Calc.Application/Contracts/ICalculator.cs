@@ -10,10 +10,12 @@
 
         bool IsKeyFound(string key);
 
-        int AddCustomOperator(string key, Func<int, int, decimal> operation);
+        int AddCustomOperator(string key, Func<int, int, decimal> operation, bool isPriorOperator);
 
         int RemoveCustomOperator(string key);
 
-        decimal ApplyOperator(ref LinkedList<string> operators, ref LinkedList<decimal> numbers, bool calculateAll);
+        int ApplyOperator(string operatorName, int firstNumber, int secondNumber);
+
+        bool GetOperatorPriorioty(string operatorName);
     }
 }

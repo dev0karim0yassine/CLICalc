@@ -22,12 +22,14 @@ var serviceProvider = services.BuildServiceProvider();
 var expEvaluator = serviceProvider.GetService<IExpressionCalculatorService>();
 
 // Use the service
-expEvaluator.AddOperator("/", (first, second) => (decimal)first / second);
+expEvaluator.AddOperator("/", (first, second) => (decimal)first / second, true);
 
-Console.WriteLine(expEvaluator.CalculateExpression("2 + 3"));
-Console.WriteLine(expEvaluator.CalculateExpression("2 - 3"));
-Console.WriteLine(expEvaluator.CalculateExpression("2 * 3 - 1"));
-Console.WriteLine(expEvaluator.CalculateExpression("6 - 2 * 5"));
+Console.WriteLine(expEvaluator.CalculateExpression("6 - 2 * 5")); //-4
+Console.WriteLine(expEvaluator.CalculateExpression("1 + 2 * 5 * 4 + 8 * 9 / 2 - 2")); //75
+Console.WriteLine(expEvaluator.CalculateExpression("2 + 3")); //5
+Console.WriteLine(expEvaluator.CalculateExpression("2 - 3")); //-1
+Console.WriteLine(expEvaluator.CalculateExpression("2 * 3 - 1")); //5
+Console.WriteLine(expEvaluator.CalculateExpression("6 - 2 * 5")); //-4
 Console.WriteLine(expEvaluator.CalculateExpression("6 - 2 * 5 / 1"));
 
 Console.ReadKey();

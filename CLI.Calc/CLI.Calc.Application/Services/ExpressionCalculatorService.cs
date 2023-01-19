@@ -16,9 +16,9 @@ namespace CLI.Calc.Application.Services
         /// </summary>
         /// <param name="key">Operator key to be added exemple "/"</param>
         /// <param name="operation">The operation to be performed</param>
-        public void AddOperator(string key, Func<int, int, decimal> operation)
+        public void AddOperator(string key, Func<int, int, decimal> operation, bool isPriorOperator)
         {
-            _calculator.AddCustomOperator(key, operation);
+            _calculator.AddCustomOperator(key, operation, isPriorOperator);
         }
 
         /// <summary>
@@ -39,44 +39,60 @@ namespace CLI.Calc.Application.Services
         public decimal CalculateExpression(string expression)
         {
             var tokens = expression.Split(" ");
-            var numbers = new LinkedList<decimal>();
-            var operators = new LinkedList<string>();
+            var numbers = new Dictionary<int, int>();
+            var powerOperators = new List<(int, string)>();
+            var lowerOperators = new List<(int, string)>();
 
             for (int i = 0; i < tokens.Length; i++)
             {
                 var token = tokens[i];
                 if (token.All(char.IsDigit))
                 {
-                    numbers.AddLast(decimal.Parse(token));
+                    numbers.Add(i, int.Parse(token));
                 }
                 else if (_calculator.IsKeyFound(token))
                 {
-                    var previousOperator = operators.Count > 0 ? operators.Last() : default;
-                    var currentOperator = token;
-                    if (previousOperator != default && CanApplyCurrent(currentOperator, previousOperator))
+                    if (_calculator.GetOperatorPriorioty(token))
                     {
-                        var result = _calculator.ApplyOperator(ref operators, ref numbers, calculateAll: false);
-                        numbers.AddLast(result);
+                        powerOperators.Add((i, token));
                     }
-                    operators.AddLast(token);
+                    else
+                    {
+                        lowerOperators.Add((i, token));
+                    }
                 }
             }
 
-            return _calculator.ApplyOperator(ref operators, ref numbers, calculateAll: true);
+            foreach (var operatorName in powerOperators.ToList())
+            {
+                var index = operatorName.Item1;
 
-        }
+                var prevNumber = numbers[index - 1];
+                var nextNumber = numbers[index + 1];
 
-        private static bool CanApplyCurrent(string currentOperator, string lastOperator)
-        {
+                var newNumber = _calculator.ApplyOperator(operatorName.Item2, prevNumber, nextNumber);
 
-            int currentOperatorPriotory = GetOperatorPriorioty(currentOperator);
-            int lastOperatorPriotory = GetOperatorPriorioty(lastOperator);
-            return currentOperatorPriotory <= lastOperatorPriotory;
-        }
-        
-        private static int GetOperatorPriorioty(string _operator)
-        {
-            return _operator == "*" || _operator == "/" ? 2 : 1;
+                numbers[index + 1] = newNumber;
+                numbers.Remove(index - 1);
+            }
+
+            // Reset the order 
+            var newNumbers = numbers.Select(x => x.Value).ToList();
+
+            foreach (var operatorName in lowerOperators.ToList())
+            {
+                var index = 1;
+
+                var prevNumber = newNumbers[index - 1];
+                var nextNumber = newNumbers[index];
+
+                var newNumber = _calculator.ApplyOperator(operatorName.Item2, prevNumber, nextNumber);
+
+                newNumbers[index] = newNumber;
+                newNumbers.Remove(newNumbers[index - 1]);
+            }
+
+            return newNumbers.FirstOrDefault();
         }
     }
 }
